@@ -8,7 +8,7 @@ export interface NgOption {
     label?: string;
     value?: string | Object;
     parent?: NgOption;
-    children?: NgOption[];
+    hasChildren?: boolean;
 }
 export declare enum KeyCode {
     Tab = 9,
@@ -17,10 +17,9 @@ export declare enum KeyCode {
     Space = 32,
     ArrowUp = 38,
     ArrowDown = 40,
-    Backspace = 8,
+    Backspace = 8
 }
 export interface NgSelectConfig {
-    placeholder?: string;
     notFoundText?: string;
     typeToSearchText?: string;
     addTagText?: string;

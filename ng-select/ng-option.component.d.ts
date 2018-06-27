@@ -1,5 +1,5 @@
 import { ElementRef, OnChanges, SimpleChanges } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 export declare class NgOptionComponent implements OnChanges {
     elementRef: ElementRef;
     value: any;
@@ -11,5 +11,5 @@ export declare class NgOptionComponent implements OnChanges {
     private _disabled;
     constructor(elementRef: ElementRef);
     ngOnChanges(changes: SimpleChanges): void;
-    private _isDisabled(value);
+    private _isDisabled;
 }

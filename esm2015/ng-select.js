@@ -1,7 +1,9 @@
 import { Directive, TemplateRef, Injectable, Component, Renderer2, ElementRef, Input, EventEmitter, Output, ViewChild, NgZone, forwardRef, Inject, ViewEncapsulation, ChangeDetectionStrategy, HostListener, ChangeDetectorRef, ContentChild, HostBinding, ContentChildren, InjectionToken, Attribute, NgModule } from '@angular/core';
+import { fromEventPattern } from 'rxjs/observable/fromEventPattern';
 import { takeUntil, startWith, tap, debounceTime, map, filter } from 'rxjs/operators';
-import { Subject, fromEventPattern, merge } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { merge } from 'rxjs/observable/merge';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -21,7 +23,7 @@ NgOptionTemplateDirective.decorators = [
 ];
 /** @nocollapse */
 NgOptionTemplateDirective.ctorParameters = () => [
-    { type: TemplateRef, },
+    { type: TemplateRef }
 ];
 class NgOptgroupTemplateDirective {
     /**
@@ -36,7 +38,7 @@ NgOptgroupTemplateDirective.decorators = [
 ];
 /** @nocollapse */
 NgOptgroupTemplateDirective.ctorParameters = () => [
-    { type: TemplateRef, },
+    { type: TemplateRef }
 ];
 class NgLabelTemplateDirective {
     /**
@@ -51,7 +53,7 @@ NgLabelTemplateDirective.decorators = [
 ];
 /** @nocollapse */
 NgLabelTemplateDirective.ctorParameters = () => [
-    { type: TemplateRef, },
+    { type: TemplateRef }
 ];
 class NgMultiLabelTemplateDirective {
     /**
@@ -66,7 +68,7 @@ NgMultiLabelTemplateDirective.decorators = [
 ];
 /** @nocollapse */
 NgMultiLabelTemplateDirective.ctorParameters = () => [
-    { type: TemplateRef, },
+    { type: TemplateRef }
 ];
 class NgHeaderTemplateDirective {
     /**
@@ -81,7 +83,7 @@ NgHeaderTemplateDirective.decorators = [
 ];
 /** @nocollapse */
 NgHeaderTemplateDirective.ctorParameters = () => [
-    { type: TemplateRef, },
+    { type: TemplateRef }
 ];
 class NgFooterTemplateDirective {
     /**
@@ -96,7 +98,7 @@ NgFooterTemplateDirective.decorators = [
 ];
 /** @nocollapse */
 NgFooterTemplateDirective.ctorParameters = () => [
-    { type: TemplateRef, },
+    { type: TemplateRef }
 ];
 class NgNotFoundTemplateDirective {
     /**
@@ -111,7 +113,7 @@ NgNotFoundTemplateDirective.decorators = [
 ];
 /** @nocollapse */
 NgNotFoundTemplateDirective.ctorParameters = () => [
-    { type: TemplateRef, },
+    { type: TemplateRef }
 ];
 class NgTypeToSearchTemplateDirective {
     /**
@@ -126,7 +128,7 @@ NgTypeToSearchTemplateDirective.decorators = [
 ];
 /** @nocollapse */
 NgTypeToSearchTemplateDirective.ctorParameters = () => [
-    { type: TemplateRef, },
+    { type: TemplateRef }
 ];
 class NgLoadingTextTemplateDirective {
     /**
@@ -141,7 +143,7 @@ NgLoadingTextTemplateDirective.decorators = [
 ];
 /** @nocollapse */
 NgLoadingTextTemplateDirective.ctorParameters = () => [
-    { type: TemplateRef, },
+    { type: TemplateRef }
 ];
 
 /**
@@ -170,14 +172,14 @@ ConsoleService.decorators = [
  * @return {?}
  */
 function isDefined(value) {
-    return value !== undefined && value !== null;
+    return value !== null && value !== undefined;
 }
 /**
  * @param {?} value
  * @return {?}
  */
 function isObject(value) {
-    return typeof value === 'object' && isDefined(value);
+    return isDefined(value) && typeof value === 'object';
 }
 /**
  * @param {?} value
@@ -198,6 +200,7 @@ function isFunction(value) {
  * @fileoverview added by tsickle
  * @suppress {checkTypes} checked by tsc
  */
+/** @type {?} */
 const diacritics = {
     '\u24B6': 'A',
     '\uFF21': 'A',
@@ -1044,7 +1047,8 @@ const diacritics = {
  * @return {?}
  */
 function stripSpecialChars(text) {
-    const /** @type {?} */ match = (a) => {
+    /** @type {?} */
+    const match = (a) => {
         return diacritics[a] || a;
     };
     return text.replace(/[^\u0000-\u007E]/g, match);
@@ -1060,97 +1064,10 @@ function stripSpecialChars(text) {
 function newId() {
     // First character is an 'a', it's good practice to tag id to begin with a letter
     return 'axxxxxxxxxxx'.replace(/[x]/g, function (_) {
-        // tslint:disable-next-line:no-bitwise
-        const /** @type {?} */ val = Math.random() * 16 | 0;
+        /** @type {?} */
+        const val = Math.random() * 16 | 0;
         return val.toString(16);
     });
-}
-
-/**
- * @fileoverview added by tsickle
- * @suppress {checkTypes} checked by tsc
- */
-class SelectionModel {
-    constructor() {
-        this._selected = [];
-    }
-    /**
-     * @return {?}
-     */
-    get value() {
-        return this._selected;
-    }
-    /**
-     * @param {?} item
-     * @param {?} multiple
-     * @return {?}
-     */
-    select(item, multiple) {
-        item.selected = true;
-        this._selected.push(item);
-        if (multiple) {
-            if (item.parent) {
-                this._removeParent(item.parent);
-                const /** @type {?} */ childrenCount = item.parent.children.length;
-                const /** @type {?} */ selectedCount = item.parent.children.filter(x => x.selected).length;
-                item.parent.selected = childrenCount === selectedCount;
-            }
-            else if (item.children) {
-                this._setChildrenSelectedState(item.children, true);
-                this._removeParentChildren(item);
-            }
-        }
-    }
-    /**
-     * @param {?} item
-     * @param {?} multiple
-     * @return {?}
-     */
-    unselect(item, multiple) {
-        this._selected = this._selected.filter(x => x !== item);
-        item.selected = false;
-        if (multiple) {
-            if (item.parent && item.parent.selected) {
-                const /** @type {?} */ children = item.parent.children;
-                this._removeParent(item.parent);
-                this._removeParentChildren(item.parent);
-                this._selected.push(...children.filter(x => x !== item));
-                item.parent.selected = false;
-            }
-            else if (item.children) {
-                this._setChildrenSelectedState(item.children, false);
-                this._removeParentChildren(item);
-            }
-        }
-    }
-    /**
-     * @return {?}
-     */
-    clear() {
-        this._selected = [];
-    }
-    /**
-     * @param {?} children
-     * @param {?} selected
-     * @return {?}
-     */
-    _setChildrenSelectedState(children, selected) {
-        children.forEach(x => x.selected = selected);
-    }
-    /**
-     * @param {?} parent
-     * @return {?}
-     */
-    _removeParentChildren(parent) {
-        this._selected = this._selected.filter(x => x.parent !== parent);
-    }
-    /**
-     * @param {?} parent
-     * @return {?}
-     */
-    _removeParent(parent) {
-        this._selected = this._selected.filter(x => x !== parent);
-    }
 }
 
 /**
@@ -1166,7 +1083,7 @@ class ItemsList {
         this._items = [];
         this._filteredItems = [];
         this._markedIndex = -1;
-        this._selectionModel = new SelectionModel();
+        this._selected = [];
     }
     /**
      * @return {?}
@@ -1183,8 +1100,8 @@ class ItemsList {
     /**
      * @return {?}
      */
-    get selectedItems() {
-        return this._selectionModel.value;
+    get value() {
+        return this._selected;
     }
     /**
      * @return {?}
@@ -1202,19 +1119,19 @@ class ItemsList {
      * @return {?}
      */
     get noItemsToSelect() {
-        return this._ngSelect.hideSelected && this._items.length === this.selectedItems.length;
+        return this._ngSelect.hideSelected && this._items.length === this._selected.length;
     }
     /**
      * @return {?}
      */
     get maxItemsSelected() {
-        return this._ngSelect.multiple && this._ngSelect.maxSelectedItems <= this.selectedItems.length;
+        return this._ngSelect.multiple && this._ngSelect.maxSelectedItems <= this._selected.length;
     }
     /**
      * @return {?}
      */
     get lastSelectedItem() {
-        return this.selectedItems[this.selectedItems.length - 1];
+        return this._selected[this._selected.length - 1];
     }
     /**
      * @param {?} items
@@ -1240,26 +1157,13 @@ class ItemsList {
         if (item.selected || this.maxItemsSelected) {
             return;
         }
-        const /** @type {?} */ multiple = this._ngSelect.multiple;
-        if (!multiple) {
+        if (!this._ngSelect.multiple) {
             this.clearSelected();
         }
-        this._selectionModel.select(item, multiple);
-        if (this._ngSelect.hideSelected && multiple) {
-            this._hideSelected(item);
-        }
-    }
-    /**
-     * @param {?} item
-     * @return {?}
-     */
-    unselect(item) {
-        if (!item.selected) {
-            return;
-        }
-        this._selectionModel.unselect(item, this._ngSelect.multiple);
-        if (this._ngSelect.hideSelected && isDefined(item.index) && this._ngSelect.multiple) {
-            this._showSelected(item);
+        this._selected.push(item);
+        item.selected = true;
+        if (this._ngSelect.hideSelected) {
+            this._filteredItems = this._filteredItems.filter(x => x !== item);
         }
     }
     /**
@@ -1267,25 +1171,36 @@ class ItemsList {
      * @return {?}
      */
     findItem(value) {
-        let /** @type {?} */ findBy;
-        if (this._ngSelect.compareWith) {
-            findBy = item => this._ngSelect.compareWith(item.value, value);
+        if (this._ngSelect.bindValue) {
+            return this._items.find(item => !item.hasChildren && this.resolveNested(item.value, this._ngSelect.bindValue) === value);
         }
-        else if (this._ngSelect.bindValue) {
-            findBy = item => !item.children && this.resolveNested(item.value, this._ngSelect.bindValue) === value;
+        /** @type {?} */
+        const option = this._items.find(x => x.value === value);
+        /** @type {?} */
+        const findBy = this._ngSelect.compareWith ?
+            (item) => this._ngSelect.compareWith(item.value, value) :
+            (item) => !item.hasChildren && item.label && item.label === this.resolveNested(value, this._ngSelect.bindLabel);
+        return option || this._items.find(item => findBy(item));
+    }
+    /**
+     * @param {?} item
+     * @return {?}
+     */
+    unselect(item) {
+        this._selected = this._selected.filter(x => x !== item);
+        item.selected = false;
+        if (this._ngSelect.hideSelected) {
+            this._filteredItems.splice(item.index, 0, item);
+            this._filteredItems = [...this._filteredItems.sort((a, b) => (a.index - b.index))];
         }
-        else {
-            findBy = item => item.value === value ||
-                !item.children && item.label && item.label === this.resolveNested(value, this._ngSelect.bindLabel);
-        }
-        return this._items.find(item => findBy(item));
     }
     /**
      * @param {?} item
      * @return {?}
      */
     addItem(item) {
-        const /** @type {?} */ option = this.mapItem(item, this._items.length);
+        /** @type {?} */
+        const option = this.mapItem(item, this._items.length);
         this._items.push(option);
         this._filteredItems.push(option);
         return option;
@@ -1294,13 +1209,13 @@ class ItemsList {
      * @return {?}
      */
     clearSelected() {
-        this._selectionModel.clear();
-        this._items.forEach((item) => {
+        this._selected.forEach((item) => {
             item.selected = false;
             item.marked = false;
         });
+        this._selected = [];
         if (this._ngSelect.hideSelected) {
-            this.resetFilteredItems();
+            this.resetItems();
         }
     }
     /**
@@ -1310,7 +1225,8 @@ class ItemsList {
     findByLabel(term) {
         term = stripSpecialChars(term).toLocaleLowerCase();
         return this.filteredItems.find(item => {
-            const /** @type {?} */ label = stripSpecialChars(item.label).toLocaleLowerCase();
+            /** @type {?} */
+            const label = stripSpecialChars(item.label).toLocaleLowerCase();
             return label.substr(0, term.length) === term;
         });
     }
@@ -1320,20 +1236,22 @@ class ItemsList {
      */
     filter(term) {
         if (!term) {
-            this.resetFilteredItems();
+            this.resetItems();
             return;
         }
         this._filteredItems = [];
         term = this._ngSelect.searchFn ? term : stripSpecialChars(term).toLocaleLowerCase();
-        const /** @type {?} */ match = this._ngSelect.searchFn || this._defaultSearchFn;
-        const /** @type {?} */ hideSelected = this._ngSelect.hideSelected;
-        for (const /** @type {?} */ key of Array.from(this._groups.keys())) {
-            const /** @type {?} */ matchedItems = [];
-            for (const /** @type {?} */ item of this._groups.get(key)) {
-                if (hideSelected && (item.parent && item.parent.selected || item.selected)) {
+        /** @type {?} */
+        const match = this._ngSelect.searchFn || this._defaultSearchFn;
+        for (const key of Array.from(this._groups.keys())) {
+            /** @type {?} */
+            const matchedItems = [];
+            for (const item of this._groups.get(key)) {
+                if (this._ngSelect.hideSelected && this._selected.indexOf(item) > -1) {
                     continue;
                 }
-                const /** @type {?} */ searchItem = this._ngSelect.searchFn ? item.value : item;
+                /** @type {?} */
+                const searchItem = this._ngSelect.searchFn ? item.value : item;
                 if (match(term, searchItem)) {
                     matchedItems.push(item);
                 }
@@ -1341,7 +1259,8 @@ class ItemsList {
             if (matchedItems.length > 0) {
                 const [last] = matchedItems.slice(-1);
                 if (last.parent) {
-                    const /** @type {?} */ head = this._items.find(x => x === last.parent);
+                    /** @type {?} */
+                    const head = this._items.find(x => x === last.parent);
                     this._filteredItems.push(head);
                 }
                 this._filteredItems.push(...matchedItems);
@@ -1351,16 +1270,13 @@ class ItemsList {
     /**
      * @return {?}
      */
-    resetFilteredItems() {
+    resetItems() {
         if (this._filteredItems.length === this._items.length) {
             return;
         }
-        if (this._ngSelect.hideSelected && this.selectedItems.length > 0) {
-            this._filteredItems = this._items.filter(x => !x.selected);
-        }
-        else {
-            this._filteredItems = this._items;
-        }
+        this._filteredItems = this._ngSelect.hideSelected ?
+            this._items.filter(x => this._selected.indexOf(x) === -1) :
+            this._items;
     }
     /**
      * @return {?}
@@ -1395,7 +1311,8 @@ class ItemsList {
         if (this._filteredItems.length === 0) {
             return;
         }
-        const /** @type {?} */ indexOfLastSelected = this._ngSelect.hideSelected ? -1 : this._filteredItems.indexOf(this.lastSelectedItem);
+        /** @type {?} */
+        const indexOfLastSelected = this._ngSelect.hideSelected ? -1 : this._filteredItems.indexOf(this.lastSelectedItem);
         if (this.lastSelectedItem && indexOfLastSelected > -1) {
             this._markedIndex = indexOfLastSelected;
         }
@@ -1416,9 +1333,11 @@ class ItemsList {
             return option[key];
         }
         else {
-            let /** @type {?} */ keys = key.split('.');
-            let /** @type {?} */ value = option;
-            for (let /** @type {?} */ i = 0, /** @type {?} */ len = keys.length; i < len; ++i) {
+            /** @type {?} */
+            let keys = key.split('.');
+            /** @type {?} */
+            let value = option;
+            for (let i = 0, len = keys.length; i < len; ++i) {
                 if (value == null) {
                     return null;
                 }
@@ -1433,11 +1352,20 @@ class ItemsList {
      * @return {?}
      */
     mapItem(item, index) {
-        const /** @type {?} */ label = isDefined(item.$ngOptionLabel) ? item.$ngOptionLabel : this.resolveNested(item, this._ngSelect.bindLabel);
-        const /** @type {?} */ value = isDefined(item.$ngOptionValue) ? item.$ngOptionValue : item;
+        /** @type {?} */
+        let label = '';
+        if (isDefined(item.label)) {
+            label = item.label;
+        }
+        else {
+            label = this.resolveNested(item, this._ngSelect.bindLabel);
+            label = isDefined(label) ? label.toString() : '';
+        }
+        /** @type {?} */
+        const value = isDefined(item.$ngOptionValue) ? item.$ngOptionValue : item;
         return {
             index: index,
-            label: isDefined(label) ? label.toString() : '',
+            label: label,
             value: value,
             disabled: item.disabled,
             htmlId: newId()
@@ -1447,53 +1375,18 @@ class ItemsList {
      * @return {?}
      */
     mapSelectedItems() {
-        this.selectedItems.forEach((selected, i) => {
-            const /** @type {?} */ value = this._ngSelect.bindValue ? selected.value[this._ngSelect.bindValue] : selected.value;
-            const /** @type {?} */ item = this.findItem(value);
+        this._selected.forEach((selected, i) => {
+            /** @type {?} */
+            const value = this._ngSelect.bindValue ? selected.value[this._ngSelect.bindValue] : selected.value;
+            /** @type {?} */
+            const item = this.findItem(value);
             if (item && selected !== item) {
                 item.selected = true;
-                this.selectedItems[i] = item;
+                this._selected[i] = item;
             }
         });
         if (this._ngSelect.hideSelected) {
-            this._filteredItems = this.filteredItems.filter(x => this.selectedItems.indexOf(x) === -1);
-        }
-    }
-    /**
-     * @param {?} item
-     * @return {?}
-     */
-    _showSelected(item) {
-        this._filteredItems.push(item);
-        if (item.parent) {
-            const /** @type {?} */ parent = item.parent;
-            const /** @type {?} */ parentExists = this._filteredItems.find(x => x === parent);
-            if (!parentExists) {
-                this._filteredItems.push(parent);
-            }
-        }
-        else if (item.children) {
-            for (const /** @type {?} */ child of item.children) {
-                child.selected = false;
-                this._filteredItems.push(child);
-            }
-        }
-        this._filteredItems = [...this._filteredItems.sort((a, b) => (a.index - b.index))];
-    }
-    /**
-     * @param {?} item
-     * @return {?}
-     */
-    _hideSelected(item) {
-        this._filteredItems = this._filteredItems.filter(x => x !== item);
-        if (item.parent) {
-            const /** @type {?} */ children = item.parent.children;
-            if (children.every(x => x.selected)) {
-                this._filteredItems = this._filteredItems.filter(x => x !== item.parent);
-            }
-        }
-        else if (item.children) {
-            this._filteredItems = this.filteredItems.filter(x => x.parent !== item);
+            this._filteredItems = this.filteredItems.filter(x => this._selected.indexOf(x) === -1);
         }
     }
     /**
@@ -1502,7 +1395,8 @@ class ItemsList {
      * @return {?}
      */
     _defaultSearchFn(search, opt) {
-        const /** @type {?} */ label = stripSpecialChars(opt.label).toLocaleLowerCase();
+        /** @type {?} */
+        const label = stripSpecialChars(opt.label).toLocaleLowerCase();
         return label.indexOf(search) > -1;
     }
     /**
@@ -1534,19 +1428,22 @@ class ItemsList {
      * @return {?}
      */
     _groupBy(items, prop) {
-        const /** @type {?} */ isFn = isFunction(this._ngSelect.groupBy);
-        const /** @type {?} */ groups = new Map();
-        for (const /** @type {?} */ item of items) {
-            let /** @type {?} */ key = isFn ? (/** @type {?} */ (prop)).apply(this, [item.value]) : item.value[/** @type {?} */ (prop)];
-            key = isDefined(key) ? key : undefined;
-            const /** @type {?} */ group = groups.get(key);
+        /** @type {?} */
+        const isFn = isFunction(this._ngSelect.groupBy);
+        /** @type {?} */
+        const groups = items.reduce((grouped, item) => {
+            /** @type {?} */
+            const key = isFn ? (/** @type {?} */ (prop)).apply(this, [item.value]) : item.value[/** @type {?} */ (prop)];
+            /** @type {?} */
+            const group = grouped.get(key);
             if (group) {
                 group.push(item);
             }
             else {
-                groups.set(key, [item]);
+                grouped.set(key, [item]);
             }
-        }
+            return grouped;
+        }, new Map());
         return groups;
     }
     /**
@@ -1554,36 +1451,34 @@ class ItemsList {
      * @return {?}
      */
     _flatten(groups) {
-        const /** @type {?} */ isFn = isFunction(this._ngSelect.groupBy);
-        const /** @type {?} */ items = [];
-        const /** @type {?} */ withoutGroup = groups.get(undefined) || [];
-        items.push(...withoutGroup);
-        let /** @type {?} */ i = withoutGroup.length;
-        for (const /** @type {?} */ key of Array.from(groups.keys())) {
-            if (!isDefined(key)) {
-                continue;
-            }
-            const /** @type {?} */ parent = {
+        /** @type {?} */
+        const isFn = isFunction(this._ngSelect.groupBy);
+        /** @type {?} */
+        let i = 0;
+        return Array.from(groups.keys()).reduce((items, key) => {
+            /** @type {?} */
+            const parent = {
                 label: key,
-                children: undefined,
-                parent: null,
-                index: i++,
+                hasChildren: true,
+                index: i,
                 disabled: !this._ngSelect.selectableGroup,
                 htmlId: newId()
             };
-            const /** @type {?} */ groupKey = isFn ? this._ngSelect.bindLabel : this._ngSelect.groupBy;
+            /** @type {?} */
+            const groupKey = isFn ? this._ngSelect.bindLabel : this._ngSelect.groupBy;
             parent.value = { [groupKey]: key };
             items.push(parent);
-            const /** @type {?} */ children = groups.get(key).map(x => {
+            i++;
+            /** @type {?} */
+            const children = groups.get(key).map(x => {
                 x.parent = parent;
-                x.children = undefined;
-                x.index = i++;
+                x.hasChildren = false;
+                i++;
                 return x;
             });
-            parent.children = children;
             items.push(...children);
-        }
-        return items;
+            return items;
+        }, []);
     }
 }
 
@@ -1605,13 +1500,13 @@ const KeyCode = {
     ArrowDown: 40,
     Backspace: 8,
 };
-KeyCode[KeyCode.Tab] = "Tab";
-KeyCode[KeyCode.Enter] = "Enter";
-KeyCode[KeyCode.Esc] = "Esc";
-KeyCode[KeyCode.Space] = "Space";
-KeyCode[KeyCode.ArrowUp] = "ArrowUp";
-KeyCode[KeyCode.ArrowDown] = "ArrowDown";
-KeyCode[KeyCode.Backspace] = "Backspace";
+KeyCode[KeyCode.Tab] = 'Tab';
+KeyCode[KeyCode.Enter] = 'Enter';
+KeyCode[KeyCode.Esc] = 'Esc';
+KeyCode[KeyCode.Space] = 'Space';
+KeyCode[KeyCode.ArrowUp] = 'ArrowUp';
+KeyCode[KeyCode.ArrowDown] = 'ArrowDown';
+KeyCode[KeyCode.Backspace] = 'Backspace';
 /**
  * @record
  */
@@ -1661,17 +1556,25 @@ class VirtualScrollService {
      * @return {?}
      */
     calculateItems(d, dropdownEl, bufferAmount) {
-        const /** @type {?} */ scrollHeight = d.childHeight * d.itemsLength;
+        /** @type {?} */
+        const scrollHeight = d.childHeight * d.itemsLength;
         if (dropdownEl.scrollTop > scrollHeight) {
             dropdownEl.scrollTop = scrollHeight;
         }
-        const /** @type {?} */ scrollTop = Math.max(0, dropdownEl.scrollTop);
-        const /** @type {?} */ indexByScrollTop = scrollTop / scrollHeight * d.itemsLength;
-        let /** @type {?} */ end = Math.min(d.itemsLength, Math.ceil(indexByScrollTop) + (d.itemsPerCol + 1));
-        const /** @type {?} */ maxStartEnd = end;
-        const /** @type {?} */ maxStart = Math.max(0, maxStartEnd - d.itemsPerCol - 1);
-        let /** @type {?} */ start = Math.min(maxStart, Math.floor(indexByScrollTop));
-        let /** @type {?} */ topPadding = d.childHeight * Math.ceil(start) - (d.childHeight * Math.min(start, bufferAmount));
+        /** @type {?} */
+        const scrollTop = Math.max(0, dropdownEl.scrollTop);
+        /** @type {?} */
+        const indexByScrollTop = scrollTop / scrollHeight * d.itemsLength;
+        /** @type {?} */
+        let end = Math.min(d.itemsLength, Math.ceil(indexByScrollTop) + (d.itemsPerCol + 1));
+        /** @type {?} */
+        const maxStartEnd = end;
+        /** @type {?} */
+        const maxStart = Math.max(0, maxStartEnd - d.itemsPerCol - 1);
+        /** @type {?} */
+        let start = Math.min(maxStart, Math.floor(indexByScrollTop));
+        /** @type {?} */
+        let topPadding = d.childHeight * Math.ceil(start) - (d.childHeight * Math.min(start, bufferAmount));
         topPadding = !isNaN(topPadding) ? topPadding : 0;
         start = !isNaN(start) ? start : -1;
         end = !isNaN(end) ? end : -1;
@@ -1694,13 +1597,16 @@ class VirtualScrollService {
      * @return {?}
      */
     calculateDimensions(itemsLength, index, panelEl, contentEl) {
-        const /** @type {?} */ panelRect = panelEl.getBoundingClientRect();
-        const /** @type {?} */ itemRect = contentEl.children[index] ? contentEl.children[index].getBoundingClientRect() : {
+        /** @type {?} */
+        const panelRect = panelEl.getBoundingClientRect();
+        /** @type {?} */
+        const itemRect = contentEl.children[index] ? contentEl.children[index].getBoundingClientRect() : {
             width: panelRect.width,
             height: panelRect.height,
             top: 0,
         };
-        const /** @type {?} */ itemsPerCol = Math.max(1, Math.floor(panelRect.height / itemRect.height));
+        /** @type {?} */
+        const itemsPerCol = Math.max(1, Math.floor(panelRect.height / itemRect.height));
         return {
             itemsLength: itemsLength,
             viewWidth: panelRect.width,
@@ -1719,7 +1625,9 @@ VirtualScrollService.decorators = [
  * @fileoverview added by tsickle
  * @suppress {checkTypes} checked by tsc
  */
+/** @type {?} */
 const TOP_CSS_CLASS = 'ng-select-top';
+/** @type {?} */
 const BOTTOM_CSS_CLASS = 'ng-select-bottom';
 class NgDropdownPanelComponent {
     /**
@@ -1757,7 +1665,8 @@ class NgDropdownPanelComponent {
      * @return {?}
      */
     handleMousedown($event) {
-        const /** @type {?} */ target = /** @type {?} */ ($event.target);
+        /** @type {?} */
+        const target = /** @type {?} */ ($event.target);
         if (target.tagName === 'INPUT') {
             return;
         }
@@ -1827,19 +1736,25 @@ class NgDropdownPanelComponent {
         if (!item) {
             return;
         }
-        const /** @type {?} */ index = this.items.indexOf(item);
+        /** @type {?} */
+        const index = this.items.indexOf(item);
         if (index < 0 || index >= this.items.length) {
             return;
         }
-        const /** @type {?} */ d = this._calculateDimensions(this.virtualScroll ? 0 : index);
-        const /** @type {?} */ scrollEl = this.scrollElementRef.nativeElement;
-        const /** @type {?} */ buffer = Math.floor(d.viewHeight / d.childHeight) - 1;
+        /** @type {?} */
+        const d = this._calculateDimensions(this.virtualScroll ? 0 : index);
+        /** @type {?} */
+        const scrollEl = this.scrollElementRef.nativeElement;
+        /** @type {?} */
+        const buffer = Math.floor(d.viewHeight / d.childHeight) - 1;
         if (this.virtualScroll) {
             scrollEl.scrollTop = (index * d.childHeight) - (d.childHeight * Math.min(index, buffer));
         }
         else {
-            const /** @type {?} */ contentEl = this.contentElementRef.nativeElement;
-            const /** @type {?} */ childrenHeight = Array.from(contentEl.children).slice(0, index).reduce((c, n) => c + n.clientHeight, 0);
+            /** @type {?} */
+            const contentEl = this.contentElementRef.nativeElement;
+            /** @type {?} */
+            const childrenHeight = Array.from(contentEl.children).slice(0, index).reduce((c, n) => c + n.clientHeight, 0);
             scrollEl.scrollTop = childrenHeight - (d.childHeight * Math.min(index, buffer));
         }
     }
@@ -1847,17 +1762,21 @@ class NgDropdownPanelComponent {
      * @return {?}
      */
     scrollIntoTag() {
-        const /** @type {?} */ el = this.scrollElementRef.nativeElement;
-        const /** @type {?} */ d = this._calculateDimensions();
+        /** @type {?} */
+        const el = this.scrollElementRef.nativeElement;
+        /** @type {?} */
+        const d = this._calculateDimensions();
         el.scrollTop = d.childHeight * (d.itemsLength + 1);
     }
     /**
      * @return {?}
      */
     updateDropdownPosition() {
-        const /** @type {?} */ dropdownEl = this._elementRef.nativeElement;
+        /** @type {?} */
+        const dropdownEl = this._elementRef.nativeElement;
         this._currentPosition = this._calculateCurrentPosition(dropdownEl);
-        const /** @type {?} */ selectEl = this._selectElement;
+        /** @type {?} */
+        const selectEl = this._selectElement;
         if (this._currentPosition === 'top') {
             this._renderer.addClass(dropdownEl, TOP_CSS_CLASS);
             this._renderer.removeClass(dropdownEl, BOTTOM_CSS_CLASS);
@@ -1883,7 +1802,8 @@ class NgDropdownPanelComponent {
         if (this._selectElement.contains($event.target)) {
             return;
         }
-        const /** @type {?} */ dropdown = this._elementRef.nativeElement;
+        /** @type {?} */
+        const dropdown = this._elementRef.nativeElement;
         if (dropdown.contains($event.target)) {
             return;
         }
@@ -1929,11 +1849,15 @@ class NgDropdownPanelComponent {
             });
             return Promise.resolve();
         }
-        const /** @type {?} */ loop = (resolve) => {
-            const /** @type {?} */ d = this._calculateDimensions();
-            const /** @type {?} */ res = this._virtualScrollService.calculateItems(d, this.scrollElementRef.nativeElement, this.bufferAmount || 0);
+        /** @type {?} */
+        const loop = (resolve) => {
+            /** @type {?} */
+            const d = this._calculateDimensions();
+            /** @type {?} */
+            const res = this._virtualScrollService.calculateItems(d, this.scrollElementRef.nativeElement, this.bufferAmount || 0);
             (/** @type {?} */ (this.paddingElementRef.nativeElement)).style.height = `${res.scrollHeight}px`;
-            const /** @type {?} */ transform = 'translateY(' + res.topPadding + 'px)';
+            /** @type {?} */
+            const transform = 'translateY(' + res.topPadding + 'px)';
             (/** @type {?} */ (this.contentElementRef.nativeElement)).style.transform = transform;
             if (res.start !== this._previousStart || res.end !== this._previousEnd) {
                 this._zone.run(() => {
@@ -1960,9 +1884,12 @@ class NgDropdownPanelComponent {
         if (this._scrollToEndFired) {
             return;
         }
-        const /** @type {?} */ scroll = this.scrollElementRef.nativeElement;
-        const /** @type {?} */ panel = this._elementRef.nativeElement;
-        const /** @type {?} */ padding = this.virtualScroll ?
+        /** @type {?} */
+        const scroll = this.scrollElementRef.nativeElement;
+        /** @type {?} */
+        const panel = this._elementRef.nativeElement;
+        /** @type {?} */
+        const padding = this.virtualScroll ?
             this.paddingElementRef.nativeElement :
             this.contentElementRef.nativeElement;
         if (scroll.scrollTop + panel.clientHeight >= padding.clientHeight) {
@@ -2006,11 +1933,16 @@ class NgDropdownPanelComponent {
         if (this.position !== 'auto') {
             return this.position;
         }
-        const /** @type {?} */ selectRect = this._selectElement.getBoundingClientRect();
-        const /** @type {?} */ scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        const /** @type {?} */ offsetTop = selectRect.top + window.pageYOffset;
-        const /** @type {?} */ height = selectRect.height;
-        const /** @type {?} */ dropdownHeight = dropdownEl.getBoundingClientRect().height;
+        /** @type {?} */
+        const selectRect = this._selectElement.getBoundingClientRect();
+        /** @type {?} */
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        /** @type {?} */
+        const offsetTop = selectRect.top + window.pageYOffset;
+        /** @type {?} */
+        const height = selectRect.height;
+        /** @type {?} */
+        const dropdownHeight = dropdownEl.getBoundingClientRect().height;
         if (offsetTop + height + dropdownHeight > scrollTop + document.documentElement.clientHeight) {
             return 'top';
         }
@@ -2022,7 +1954,8 @@ class NgDropdownPanelComponent {
      * @return {?}
      */
     _appendDropdown() {
-        const /** @type {?} */ parent = document.querySelector(this.appendTo);
+        /** @type {?} */
+        const parent = document.querySelector(this.appendTo);
         if (!parent) {
             throw new Error(`appendTo selector ${this.appendTo} did not found any parent element`);
         }
@@ -2032,13 +1965,20 @@ class NgDropdownPanelComponent {
      * @return {?}
      */
     _updateAppendedDropdownPosition() {
-        const /** @type {?} */ parent = document.querySelector(this.appendTo) || document.body;
-        const /** @type {?} */ selectRect = this._selectElement.getBoundingClientRect();
-        const /** @type {?} */ dropdownPanel = this._elementRef.nativeElement;
-        const /** @type {?} */ boundingRect = parent.getBoundingClientRect();
-        const /** @type {?} */ offsetTop = selectRect.top - boundingRect.top;
-        const /** @type {?} */ offsetLeft = selectRect.left - boundingRect.left;
-        const /** @type {?} */ topDelta = this._currentPosition === 'bottom' ? selectRect.height : -dropdownPanel.clientHeight;
+        /** @type {?} */
+        const parent = document.querySelector(this.appendTo) || document.body;
+        /** @type {?} */
+        const selectRect = this._selectElement.getBoundingClientRect();
+        /** @type {?} */
+        const dropdownPanel = this._elementRef.nativeElement;
+        /** @type {?} */
+        const boundingRect = parent.getBoundingClientRect();
+        /** @type {?} */
+        const offsetTop = selectRect.top - boundingRect.top;
+        /** @type {?} */
+        const offsetLeft = selectRect.left - boundingRect.left;
+        /** @type {?} */
+        const topDelta = this._currentPosition === 'bottom' ? selectRect.height : -dropdownPanel.clientHeight;
         dropdownPanel.style.top = offsetTop + topDelta + 'px';
         dropdownPanel.style.bottom = 'auto';
         dropdownPanel.style.left = offsetLeft + 'px';
@@ -2052,9 +1992,12 @@ class NgDropdownPanelComponent {
         if (this.items.length === 0) {
             return Promise.resolve();
         }
-        const /** @type {?} */ dropdownEl = this._elementRef.nativeElement;
-        const /** @type {?} */ ready = (resolve) => {
-            const /** @type {?} */ ngOption = dropdownEl.querySelector('.ng-option');
+        /** @type {?} */
+        const dropdownEl = this._elementRef.nativeElement;
+        /** @type {?} */
+        const ready = (resolve) => {
+            /** @type {?} */
+            const ngOption = dropdownEl.querySelector('.ng-option');
             if (ngOption) {
                 resolve();
                 return;
@@ -2090,28 +2033,28 @@ NgDropdownPanelComponent.decorators = [
 ];
 /** @nocollapse */
 NgDropdownPanelComponent.ctorParameters = () => [
-    { type: NgSelectComponent, decorators: [{ type: Inject, args: [forwardRef(() => NgSelectComponent),] },] },
-    { type: Renderer2, },
-    { type: ElementRef, },
-    { type: NgZone, },
-    { type: VirtualScrollService, },
-    { type: WindowService, },
+    { type: NgSelectComponent, decorators: [{ type: Inject, args: [forwardRef(() => NgSelectComponent),] }] },
+    { type: Renderer2 },
+    { type: ElementRef },
+    { type: NgZone },
+    { type: VirtualScrollService },
+    { type: WindowService }
 ];
 NgDropdownPanelComponent.propDecorators = {
-    "items": [{ type: Input },],
-    "position": [{ type: Input },],
-    "appendTo": [{ type: Input },],
-    "bufferAmount": [{ type: Input },],
-    "virtualScroll": [{ type: Input },],
-    "headerTemplate": [{ type: Input },],
-    "footerTemplate": [{ type: Input },],
-    "update": [{ type: Output },],
-    "scrollToEnd": [{ type: Output },],
-    "outsideClick": [{ type: Output },],
-    "contentElementRef": [{ type: ViewChild, args: ['content', { read: ElementRef },] },],
-    "scrollElementRef": [{ type: ViewChild, args: ['scroll', { read: ElementRef },] },],
-    "paddingElementRef": [{ type: ViewChild, args: ['padding', { read: ElementRef },] },],
-    "handleMousedown": [{ type: HostListener, args: ['mousedown', ['$event'],] },],
+    items: [{ type: Input }],
+    position: [{ type: Input }],
+    appendTo: [{ type: Input }],
+    bufferAmount: [{ type: Input }],
+    virtualScroll: [{ type: Input }],
+    headerTemplate: [{ type: Input }],
+    footerTemplate: [{ type: Input }],
+    update: [{ type: Output }],
+    scrollToEnd: [{ type: Output }],
+    outsideClick: [{ type: Output }],
+    contentElementRef: [{ type: ViewChild, args: ['content', { read: ElementRef },] }],
+    scrollElementRef: [{ type: ViewChild, args: ['scroll', { read: ElementRef },] }],
+    paddingElementRef: [{ type: ViewChild, args: ['padding', { read: ElementRef },] }],
+    handleMousedown: [{ type: HostListener, args: ['mousedown', ['$event'],] }]
 };
 
 /**
@@ -2165,17 +2108,18 @@ NgOptionComponent.decorators = [
 ];
 /** @nocollapse */
 NgOptionComponent.ctorParameters = () => [
-    { type: ElementRef, },
+    { type: ElementRef }
 ];
 NgOptionComponent.propDecorators = {
-    "value": [{ type: Input },],
-    "disabled": [{ type: Input },],
+    value: [{ type: Input }],
+    disabled: [{ type: Input }]
 };
 
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes} checked by tsc
  */
+/** @type {?} */
 const NG_SELECT_DEFAULT_CONFIG = new InjectionToken('ng-select-default-options');
 class NgSelectComponent {
     /**
@@ -2183,12 +2127,16 @@ class NgSelectComponent {
      * @param {?} classes
      * @param {?} _cd
      * @param {?} _console
+     * @param {?} _zone
+     * @param {?} _window
      * @param {?} elementRef
      */
-    constructor(config, classes, _cd, _console, elementRef) {
+    constructor(config, classes, _cd, _console, _zone, _window, elementRef) {
         this.classes = classes;
         this._cd = _cd;
         this._console = _console;
+        this._zone = _zone;
+        this._window = _window;
         this.elementRef = elementRef;
         // inputs
         this.items = [];
@@ -2204,11 +2152,10 @@ class NgSelectComponent {
         this.selectableGroup = false;
         this.searchFn = null;
         this.clearSearchOnAdd = true;
-        this.labelForId = null;
+        this.labelForId = '';
         this.multiple = false;
         this.addTag = false;
         this.searchable = true;
-        this.isOpen = false;
         // output events
         this.blurEvent = new EventEmitter();
         this.focusEvent = new EventEmitter();
@@ -2220,7 +2167,8 @@ class NgSelectComponent {
         this.addEvent = new EventEmitter();
         this.removeEvent = new EventEmitter();
         this.scrollToEnd = new EventEmitter();
-        this.disabled = false;
+        this.isOpen = false;
+        this.isDisabled = false;
         this.itemsList = new ItemsList(this);
         this.viewPortItems = [];
         this.filterValue = null;
@@ -2233,7 +2181,8 @@ class NgSelectComponent {
         this._onChange = (_) => { };
         this._onTouched = () => { };
         this.clearItem = (item) => {
-            const /** @type {?} */ option = this.selectedItems.find(x => x.value === item);
+            /** @type {?} */
+            const option = this.selectedItems.find(x => x.value === item);
             this.unselect(option);
         };
         this._mergeGlobalConfig(config);
@@ -2261,7 +2210,7 @@ class NgSelectComponent {
      * @return {?}
      */
     get selectedItems() {
-        return this.itemsList.selectedItems;
+        return this.itemsList.value;
     }
     /**
      * @return {?}
@@ -2291,9 +2240,6 @@ class NgSelectComponent {
         }
         if (changes["items"]) {
             this._setItems(changes["items"].currentValue || []);
-        }
-        if (changes["isOpen"]) {
-            this._manualOpen = true;
         }
     }
     /**
@@ -2335,8 +2281,6 @@ class NgSelectComponent {
                     break;
                 case KeyCode.Esc:
                     this.close();
-                    $event.preventDefault();
-                    $event.stopPropagation();
                     break;
                 case KeyCode.Backspace:
                     this._handleBackspace();
@@ -2352,7 +2296,8 @@ class NgSelectComponent {
      * @return {?}
      */
     handleMousedown($event) {
-        const /** @type {?} */ target = /** @type {?} */ ($event.target);
+        /** @type {?} */
+        const target = /** @type {?} */ ($event.target);
         if (target.className === 'ng-clear') {
             this.handleClearClick();
             return;
@@ -2437,7 +2382,7 @@ class NgSelectComponent {
      * @return {?}
      */
     setDisabledState(isDisabled) {
-        this.disabled = isDisabled;
+        this.isDisabled = isDisabled;
         this._cd.markForCheck();
     }
     /**
@@ -2455,7 +2400,7 @@ class NgSelectComponent {
      * @return {?}
      */
     open() {
-        if (this.disabled || this.isOpen || this.itemsList.maxItemsSelected || this._manualOpen) {
+        if (this.isDisabled || this.isOpen || this.itemsList.maxItemsSelected) {
             return;
         }
         if (!this._isTypeahead && !this.addTag && this.itemsList.noItemsToSelect) {
@@ -2473,7 +2418,7 @@ class NgSelectComponent {
      * @return {?}
      */
     close() {
-        if (!this.isOpen || this._manualOpen) {
+        if (!this.isOpen) {
             return;
         }
         this.isOpen = false;
@@ -2487,7 +2432,7 @@ class NgSelectComponent {
      * @return {?}
      */
     toggleItem(item) {
-        if (!item || item.disabled || this.disabled) {
+        if (!item || item.disabled || this.isDisabled) {
             return;
         }
         if (this.multiple && item.selected) {
@@ -2516,7 +2461,14 @@ class NgSelectComponent {
      * @return {?}
      */
     focus() {
-        this.filterInput.nativeElement.focus();
+        if (!this.filterInput) {
+            return;
+        }
+        this._zone.runOutsideAngular(() => {
+            this._window.setTimeout(() => {
+                this.filterInput.nativeElement.focus();
+            }, 5);
+        });
     }
     /**
      * @param {?} item
@@ -2531,26 +2483,27 @@ class NgSelectComponent {
      * @return {?}
      */
     selectTag() {
-        let /** @type {?} */ tag;
+        /** @type {?} */
+        let tag;
         if (isFunction(this.addTag)) {
             tag = (/** @type {?} */ (this.addTag))(this.filterValue);
         }
         else {
             tag = this._primitive ? this.filterValue : { [this.bindLabel]: this.filterValue };
         }
-        const /** @type {?} */ handleTag = (item) => this._isTypeahead ? this.itemsList.mapItem(item, null) : this.itemsList.addItem(item);
         if (isPromise(tag)) {
-            tag.then(item => this.select(handleTag(item))).catch(() => { });
+            tag.then(item => this.select(this.itemsList.addItem(item)))
+                .catch(() => { });
         }
         else if (tag) {
-            this.select(handleTag(tag));
+            this.select(this.itemsList.addItem(tag));
         }
     }
     /**
      * @return {?}
      */
     showClear() {
-        return this.clearable && (this.hasValue || this.filterValue) && !this.disabled;
+        return this.clearable && (this.hasValue || this.filterValue) && !this.isDisabled;
     }
     /**
      * @return {?}
@@ -2565,7 +2518,8 @@ class NgSelectComponent {
      * @return {?}
      */
     showNoItemsFound() {
-        const /** @type {?} */ empty = this.itemsList.filteredItems.length === 0;
+        /** @type {?} */
+        const empty = this.itemsList.filteredItems.length === 0;
         return ((empty && !this._isTypeahead && !this.loading) ||
             (empty && this._isTypeahead && this.filterValue && !this.loading)) &&
             !this.showAddTag();
@@ -2574,7 +2528,8 @@ class NgSelectComponent {
      * @return {?}
      */
     showTypeToSearch() {
-        const /** @type {?} */ empty = this.itemsList.filteredItems.length === 0;
+        /** @type {?} */
+        const empty = this.itemsList.filteredItems.length === 0;
         return empty && this._isTypeahead && !this.filterValue && !this.loading;
     }
     /**
@@ -2589,9 +2544,7 @@ class NgSelectComponent {
         }
         else {
             this.itemsList.filter(this.filterValue);
-            if (this.isOpen) {
-                this.itemsList.markSelectedOrDefault(this.markFirst);
-            }
+            this.itemsList.markSelectedOrDefault(this.markFirst);
         }
     }
     /**
@@ -2608,7 +2561,7 @@ class NgSelectComponent {
     onInputBlur() {
         (/** @type {?} */ (this.elementRef.nativeElement)).classList.remove('ng-select-focused');
         this.blurEvent.emit(null);
-        if (!this.isOpen && !this.disabled) {
+        if (!this.isOpen && !this.isDisabled) {
             this._onTouched();
         }
         this._focused = false;
@@ -2644,15 +2597,13 @@ class NgSelectComponent {
      * @return {?}
      */
     _setItems(items) {
-        const /** @type {?} */ firstItem = items[0];
+        /** @type {?} */
+        const firstItem = items[0];
         this.bindLabel = this.bindLabel || this._defaultLabel;
-        this._primitive = !firstItem ? this._primitive : !isObject(firstItem);
+        this._primitive = !isObject(firstItem);
         this.itemsList.setItems(items);
         if (items.length > 0 && this.hasValue) {
             this.itemsList.mapSelectedItems();
-        }
-        if (this.isOpen && isDefined(this.filterValue) && !this._isTypeahead) {
-            this.itemsList.filter(this.filterValue);
         }
         if (this._isTypeahead || this.isOpen) {
             this.itemsList.markSelectedOrDefault(this.markFirst);
@@ -2662,10 +2613,11 @@ class NgSelectComponent {
      * @return {?}
      */
     _setItemsFromNgOptions() {
-        const /** @type {?} */ handleNgOptions = (options) => {
+        /** @type {?} */
+        const handleNgOptions = (options) => {
             this.items = options.map(option => ({
                 $ngOptionValue: option.value,
-                $ngOptionLabel: option.elementRef.nativeElement.innerHTML,
+                label: option.elementRef.nativeElement.innerHTML,
                 disabled: option.disabled
             }));
             this.itemsList.setItems(this.items);
@@ -2674,12 +2626,15 @@ class NgSelectComponent {
             }
             this.detectChanges();
         };
-        const /** @type {?} */ handleOptionChange = () => {
-            const /** @type {?} */ changedOrDestroyed = merge(this.ngOptions.changes, this._destroy$);
+        /** @type {?} */
+        const handleOptionChange = () => {
+            /** @type {?} */
+            const changedOrDestroyed = merge(this.ngOptions.changes, this._destroy$);
             merge(...this.ngOptions.map(option => option.stateChange$))
                 .pipe(takeUntil(changedOrDestroyed))
                 .subscribe(option => {
-                const /** @type {?} */ item = this.itemsList.findItem(option.value);
+                /** @type {?} */
+                const item = this.itemsList.findItem(option.value);
                 item.disabled = option.disabled;
                 this._cd.markForCheck();
             });
@@ -2701,7 +2656,8 @@ class NgSelectComponent {
             Array.isArray(value) && value.length === 0) {
             return false;
         }
-        const /** @type {?} */ validateBinding = (item) => {
+        /** @type {?} */
+        const validateBinding = (item) => {
             if (isObject(item) && this.bindValue) {
                 this._console.warn(`Binding object(${JSON.stringify(item)}) with bindValue is not allowed.`);
                 return false;
@@ -2727,14 +2683,18 @@ class NgSelectComponent {
         if (!this._isValidWriteValue(ngModel)) {
             return;
         }
-        const /** @type {?} */ select = (val) => {
-            let /** @type {?} */ item = this.itemsList.findItem(val);
+        /** @type {?} */
+        const select = (val) => {
+            /** @type {?} */
+            let item = this.itemsList.findItem(val);
             if (item) {
                 this.itemsList.select(item);
             }
             else {
-                const /** @type {?} */ isValObject = isObject(val);
-                const /** @type {?} */ isPrimitive = !isValObject && !this.bindValue;
+                /** @type {?} */
+                const isValObject = isObject(val);
+                /** @type {?} */
+                const isPrimitive = !isValObject && !this.bindValue;
                 if ((isValObject || isPrimitive)) {
                     this.itemsList.select(this.itemsList.mapItem(val, null));
                 }
@@ -2766,7 +2726,8 @@ class NgSelectComponent {
         this._keyPress$
             .pipe(takeUntil(this._destroy$), tap(letter => this._pressedKeys.push(letter)), debounceTime(200), filter(() => this._pressedKeys.length > 0), map(() => this._pressedKeys.join('')))
             .subscribe(term => {
-            const /** @type {?} */ item = this.itemsList.findByLabel(term);
+            /** @type {?} */
+            const item = this.itemsList.findByLabel(term);
             if (item) {
                 if (this.isOpen) {
                     this.itemsList.markItem(item);
@@ -2783,11 +2744,13 @@ class NgSelectComponent {
      * @return {?}
      */
     _updateNgModel() {
-        const /** @type {?} */ model = [];
-        for (const /** @type {?} */ item of this.selectedItems) {
+        /** @type {?} */
+        const model = [];
+        for (const item of this.selectedItems) {
             if (this.bindValue) {
-                let /** @type {?} */ resolvedValue = null;
-                if (item.children) {
+                /** @type {?} */
+                let resolvedValue = null;
+                if (item.hasChildren) {
                     resolvedValue = item.value[this.groupBy];
                 }
                 else {
@@ -2817,7 +2780,7 @@ class NgSelectComponent {
             return;
         }
         this.filterValue = null;
-        this.itemsList.resetFilteredItems();
+        this.itemsList.resetItems();
     }
     /**
      * @return {?}
@@ -2867,11 +2830,11 @@ class NgSelectComponent {
      * @return {?}
      */
     _handleEnter($event) {
-        if (this.isOpen || this._manualOpen) {
+        if (this.isOpen) {
             if (this.itemsList.markedItem) {
                 this.toggleItem(this.itemsList.markedItem);
             }
-            else if (this.addTag && this.filterValue) {
+            else if (this.addTag) {
                 this.selectTag();
             }
         }
@@ -2897,7 +2860,7 @@ class NgSelectComponent {
      * @return {?}
      */
     _handleArrowDown($event) {
-        if (this._nextItemIsTag(+1)) {
+        if (this.nextItemIsTag(+1)) {
             this.itemsList.unmarkItem();
             this._scrollToTag();
         }
@@ -2916,7 +2879,7 @@ class NgSelectComponent {
         if (!this.isOpen) {
             return;
         }
-        if (this._nextItemIsTag(-1)) {
+        if (this.nextItemIsTag(-1)) {
             this.itemsList.unmarkItem();
             this._scrollToTag();
         }
@@ -2930,8 +2893,9 @@ class NgSelectComponent {
      * @param {?} nextStep
      * @return {?}
      */
-    _nextItemIsTag(nextStep) {
-        const /** @type {?} */ nextIndex = this.itemsList.markedIndex + nextStep;
+    nextItemIsTag(nextStep) {
+        /** @type {?} */
+        const nextIndex = this.itemsList.markedIndex + nextStep;
         return this.addTag && this.filterValue
             && this.itemsList.markedItem
             && (nextIndex < 0 || nextIndex === this.itemsList.filteredItems.length);
@@ -2961,7 +2925,6 @@ class NgSelectComponent {
      * @return {?}
      */
     _mergeGlobalConfig(config) {
-        this.placeholder = this.placeholder || config.placeholder;
         this.notFoundText = this.notFoundText || config.notFoundText;
         this.typeToSearchText = this.typeToSearchText || config.typeToSearchText;
         this.addTagText = this.addTagText || config.addTagText;
@@ -2999,9 +2962,9 @@ NgSelectComponent.decorators = [
             <input #filterInput
                    type="text"
                    autocomplete="{{dropdownId}}"
-                   [attr.id]="labelForId"
+                   [id]="labelForId"
                    [readOnly]="!searchable"
-                   [disabled]="disabled"
+                   [disabled]="isDisabled"
                    [value]="filterValue"
                    (input)="filter(filterInput.value)"
                    (focus)="onInputFocus()"
@@ -3042,23 +3005,23 @@ NgSelectComponent.decorators = [
     [id]="dropdownId">
     
     <ng-container>
-        <div class="ng-option" [attr.role]="item.children ? 'group' : 'option'" (click)="toggleItem(item)" (mousedown)="$event.preventDefault()" (mouseover)="onItemHover(item)"
+        <div class="ng-option" [attr.role]="item.hasChildren ? 'group' : 'option'" (click)="toggleItem(item)" (mousedown)="$event.preventDefault()" (mouseover)="onItemHover(item)"
                 *ngFor="let item of viewPortItems"
                 [class.ng-option-disabled]="item.disabled"
                 [class.ng-option-selected]="item.selected"
-                [class.ng-optgroup]="item.children"
-                [class.ng-option]="!item.children"
+                [class.ng-optgroup]="item.hasChildren"
+                [class.ng-option]="!item.hasChildren"
                 [class.ng-option-child]="!!item.parent"
                 [class.ng-option-marked]="item === itemsList.markedItem"
-                [attr.id]="item?.htmlId">
+                id="{{item?.htmlId || null}}">
 
             <ng-template #defaultOptionTemplate>
                 <span class="ng-option-label">{{item.label}}</span>
             </ng-template>
 
             <ng-template
-                [ngTemplateOutlet]="item.children ? (optgroupTemplate || defaultOptionTemplate) : (optionTemplate || defaultOptionTemplate)"
-                [ngTemplateOutletContext]="{ item: item.value, item$:item, index: item.index, searchTerm: filterValue }">
+                [ngTemplateOutlet]="item.hasChildren ? (optgroupTemplate || defaultOptionTemplate) : (optionTemplate || defaultOptionTemplate)"
+                [ngTemplateOutletContext]="{ item: item.value, index: item.index, searchTerm: filterValue }">
             </ng-template>
         </div>
 
@@ -3118,69 +3081,71 @@ NgSelectComponent.decorators = [
 ];
 /** @nocollapse */
 NgSelectComponent.ctorParameters = () => [
-    { type: undefined, decorators: [{ type: Inject, args: [NG_SELECT_DEFAULT_CONFIG,] },] },
-    { type: undefined, decorators: [{ type: Attribute, args: ['class',] },] },
-    { type: ChangeDetectorRef, },
-    { type: ConsoleService, },
-    { type: ElementRef, },
+    { type: undefined, decorators: [{ type: Inject, args: [NG_SELECT_DEFAULT_CONFIG,] }] },
+    { type: String, decorators: [{ type: Attribute, args: ['class',] }] },
+    { type: ChangeDetectorRef },
+    { type: ConsoleService },
+    { type: NgZone },
+    { type: WindowService },
+    { type: ElementRef }
 ];
 NgSelectComponent.propDecorators = {
-    "items": [{ type: Input },],
-    "bindLabel": [{ type: Input },],
-    "bindValue": [{ type: Input },],
-    "clearable": [{ type: Input },],
-    "markFirst": [{ type: Input },],
-    "placeholder": [{ type: Input },],
-    "notFoundText": [{ type: Input },],
-    "typeToSearchText": [{ type: Input },],
-    "addTagText": [{ type: Input },],
-    "loadingText": [{ type: Input },],
-    "clearAllText": [{ type: Input },],
-    "dropdownPosition": [{ type: Input },],
-    "appendTo": [{ type: Input },],
-    "loading": [{ type: Input },],
-    "closeOnSelect": [{ type: Input },],
-    "hideSelected": [{ type: Input },],
-    "selectOnTab": [{ type: Input },],
-    "maxSelectedItems": [{ type: Input },],
-    "groupBy": [{ type: Input },],
-    "bufferAmount": [{ type: Input },],
-    "virtualScroll": [{ type: Input },],
-    "selectableGroup": [{ type: Input },],
-    "searchFn": [{ type: Input },],
-    "clearSearchOnAdd": [{ type: Input },],
-    "labelForId": [{ type: Input },],
-    "typeahead": [{ type: Input }, { type: HostBinding, args: ['class.ng-select-typeahead',] },],
-    "multiple": [{ type: Input }, { type: HostBinding, args: ['class.ng-select-multiple',] },],
-    "addTag": [{ type: Input }, { type: HostBinding, args: ['class.ng-select-taggable',] },],
-    "searchable": [{ type: Input }, { type: HostBinding, args: ['class.ng-select-searchable',] },],
-    "isOpen": [{ type: Input }, { type: HostBinding, args: ['class.ng-select-opened',] },],
-    "compareWith": [{ type: Input },],
-    "blurEvent": [{ type: Output, args: ['blur',] },],
-    "focusEvent": [{ type: Output, args: ['focus',] },],
-    "changeEvent": [{ type: Output, args: ['change',] },],
-    "openEvent": [{ type: Output, args: ['open',] },],
-    "closeEvent": [{ type: Output, args: ['close',] },],
-    "searchEvent": [{ type: Output, args: ['search',] },],
-    "clearEvent": [{ type: Output, args: ['clear',] },],
-    "addEvent": [{ type: Output, args: ['add',] },],
-    "removeEvent": [{ type: Output, args: ['remove',] },],
-    "scrollToEnd": [{ type: Output, args: ['scrollToEnd',] },],
-    "optionTemplate": [{ type: ContentChild, args: [NgOptionTemplateDirective, { read: TemplateRef },] },],
-    "optgroupTemplate": [{ type: ContentChild, args: [NgOptgroupTemplateDirective, { read: TemplateRef },] },],
-    "labelTemplate": [{ type: ContentChild, args: [NgLabelTemplateDirective, { read: TemplateRef },] },],
-    "multiLabelTemplate": [{ type: ContentChild, args: [NgMultiLabelTemplateDirective, { read: TemplateRef },] },],
-    "headerTemplate": [{ type: ContentChild, args: [NgHeaderTemplateDirective, { read: TemplateRef },] },],
-    "footerTemplate": [{ type: ContentChild, args: [NgFooterTemplateDirective, { read: TemplateRef },] },],
-    "notFoundTemplate": [{ type: ContentChild, args: [NgNotFoundTemplateDirective, { read: TemplateRef },] },],
-    "typeToSearchTemplate": [{ type: ContentChild, args: [NgTypeToSearchTemplateDirective, { read: TemplateRef },] },],
-    "loadingTextTemplate": [{ type: ContentChild, args: [NgLoadingTextTemplateDirective, { read: TemplateRef },] },],
-    "dropdownPanel": [{ type: ViewChild, args: [forwardRef(() => NgDropdownPanelComponent),] },],
-    "ngOptions": [{ type: ContentChildren, args: [NgOptionComponent, { descendants: true },] },],
-    "filterInput": [{ type: ViewChild, args: ['filterInput',] },],
-    "disabled": [{ type: HostBinding, args: ['class.ng-select-disabled',] },],
-    "filtered": [{ type: HostBinding, args: ['class.ng-select-filtered',] },],
-    "handleKeyDown": [{ type: HostListener, args: ['keydown', ['$event'],] },],
+    items: [{ type: Input }],
+    bindLabel: [{ type: Input }],
+    bindValue: [{ type: Input }],
+    clearable: [{ type: Input }],
+    markFirst: [{ type: Input }],
+    placeholder: [{ type: Input }],
+    notFoundText: [{ type: Input }],
+    typeToSearchText: [{ type: Input }],
+    addTagText: [{ type: Input }],
+    loadingText: [{ type: Input }],
+    clearAllText: [{ type: Input }],
+    dropdownPosition: [{ type: Input }],
+    appendTo: [{ type: Input }],
+    loading: [{ type: Input }],
+    closeOnSelect: [{ type: Input }],
+    hideSelected: [{ type: Input }],
+    selectOnTab: [{ type: Input }],
+    maxSelectedItems: [{ type: Input }],
+    groupBy: [{ type: Input }],
+    bufferAmount: [{ type: Input }],
+    virtualScroll: [{ type: Input }],
+    selectableGroup: [{ type: Input }],
+    searchFn: [{ type: Input }],
+    clearSearchOnAdd: [{ type: Input }],
+    labelForId: [{ type: Input }],
+    typeahead: [{ type: Input }, { type: HostBinding, args: ['class.ng-select-typeahead',] }],
+    multiple: [{ type: Input }, { type: HostBinding, args: ['class.ng-select-multiple',] }],
+    addTag: [{ type: Input }, { type: HostBinding, args: ['class.ng-select-taggable',] }],
+    searchable: [{ type: Input }, { type: HostBinding, args: ['class.ng-select-searchable',] }],
+    compareWith: [{ type: Input }],
+    blurEvent: [{ type: Output, args: ['blur',] }],
+    focusEvent: [{ type: Output, args: ['focus',] }],
+    changeEvent: [{ type: Output, args: ['change',] }],
+    openEvent: [{ type: Output, args: ['open',] }],
+    closeEvent: [{ type: Output, args: ['close',] }],
+    searchEvent: [{ type: Output, args: ['search',] }],
+    clearEvent: [{ type: Output, args: ['clear',] }],
+    addEvent: [{ type: Output, args: ['add',] }],
+    removeEvent: [{ type: Output, args: ['remove',] }],
+    scrollToEnd: [{ type: Output, args: ['scrollToEnd',] }],
+    optionTemplate: [{ type: ContentChild, args: [NgOptionTemplateDirective, { read: TemplateRef },] }],
+    optgroupTemplate: [{ type: ContentChild, args: [NgOptgroupTemplateDirective, { read: TemplateRef },] }],
+    labelTemplate: [{ type: ContentChild, args: [NgLabelTemplateDirective, { read: TemplateRef },] }],
+    multiLabelTemplate: [{ type: ContentChild, args: [NgMultiLabelTemplateDirective, { read: TemplateRef },] }],
+    headerTemplate: [{ type: ContentChild, args: [NgHeaderTemplateDirective, { read: TemplateRef },] }],
+    footerTemplate: [{ type: ContentChild, args: [NgFooterTemplateDirective, { read: TemplateRef },] }],
+    notFoundTemplate: [{ type: ContentChild, args: [NgNotFoundTemplateDirective, { read: TemplateRef },] }],
+    typeToSearchTemplate: [{ type: ContentChild, args: [NgTypeToSearchTemplateDirective, { read: TemplateRef },] }],
+    loadingTextTemplate: [{ type: ContentChild, args: [NgLoadingTextTemplateDirective, { read: TemplateRef },] }],
+    dropdownPanel: [{ type: ViewChild, args: [forwardRef(() => NgDropdownPanelComponent),] }],
+    ngOptions: [{ type: ContentChildren, args: [NgOptionComponent, { descendants: true },] }],
+    filterInput: [{ type: ViewChild, args: ['filterInput',] }],
+    isOpen: [{ type: HostBinding, args: ['class.ng-select-opened',] }],
+    isDisabled: [{ type: HostBinding, args: ['class.ng-select-disabled',] }],
+    filtered: [{ type: HostBinding, args: ['class.ng-select-filtered',] }],
+    handleKeyDown: [{ type: HostListener, args: ['keydown', ['$event'],] }]
 };
 
 /**
@@ -3216,12 +3181,14 @@ class NgOptionHighlightDirective {
      * @return {?}
      */
     _highlightLabelWithSearchTerm() {
-        const /** @type {?} */ label = this.label;
+        /** @type {?} */
+        const label = this.label;
         if (!this.term) {
             this._setInnerHtml(label);
             return;
         }
-        const /** @type {?} */ indexOfTerm = stripSpecialChars(label)
+        /** @type {?} */
+        const indexOfTerm = stripSpecialChars(label)
             .toLowerCase()
             .indexOf(stripSpecialChars(this.term).toLowerCase());
         if (indexOfTerm > -1) {
@@ -3248,11 +3215,11 @@ NgOptionHighlightDirective.decorators = [
 ];
 /** @nocollapse */
 NgOptionHighlightDirective.ctorParameters = () => [
-    { type: ElementRef, },
-    { type: Renderer2, },
+    { type: ElementRef },
+    { type: Renderer2 }
 ];
 NgOptionHighlightDirective.propDecorators = {
-    "term": [{ type: Input, args: ['ngOptionHighlight',] },],
+    term: [{ type: Input, args: ['ngOptionHighlight',] }]
 };
 
 /**

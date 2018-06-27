@@ -46,16 +46,16 @@ export declare class NgDropdownPanelComponent implements OnInit, OnChanges, OnDe
     scrollInto(item: NgOption): void;
     scrollIntoTag(): void;
     updateDropdownPosition(): void;
-    private _handleOutsideClick($event);
-    private _handleScroll();
-    private _handleItemsChange(items);
-    private _updateItems();
-    private _fireScrollToEnd();
-    private _calculateDimensions(index?);
-    private _handleDocumentResize();
-    private _scrollToMarked();
-    private _calculateCurrentPosition(dropdownEl);
-    private _appendDropdown();
-    private _updateAppendedDropdownPosition();
-    private _whenContentReady();
+    private _handleOutsideClick;
+    private _handleScroll;
+    private _handleItemsChange;
+    private _updateItems;
+    private _fireScrollToEnd;
+    private _calculateDimensions;
+    private _handleDocumentResize;
+    private _scrollToMarked;
+    private _calculateCurrentPosition;
+    private _appendDropdown;
+    private _updateAppendedDropdownPosition;
+    private _whenContentReady;
 }

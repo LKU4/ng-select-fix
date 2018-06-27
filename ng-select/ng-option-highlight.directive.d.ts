@@ -8,6 +8,6 @@ export declare class NgOptionHighlightDirective implements OnChanges, AfterViewI
     constructor(elementRef: ElementRef, renderer: Renderer2);
     ngOnChanges(changes: SimpleChanges): void;
     ngAfterViewInit(): void;
-    private _highlightLabelWithSearchTerm();
-    private _setInnerHtml(html);
+    private _highlightLabelWithSearchTerm;
+    private _setInnerHtml;
 }

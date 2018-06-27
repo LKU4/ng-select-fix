@@ -6,11 +6,11 @@ export declare class ItemsList {
     private _filteredItems;
     private _groups;
     private _markedIndex;
-    private _selectionModel;
+    private _selected;
     constructor(_ngSelect: NgSelectComponent);
     readonly items: NgOption[];
     readonly filteredItems: NgOption[];
-    readonly selectedItems: NgOption[];
+    readonly value: NgOption[];
     readonly markedItem: NgOption;
     readonly markedIndex: number;
     readonly noItemsToSelect: boolean;
@@ -18,13 +18,13 @@ export declare class ItemsList {
     readonly lastSelectedItem: NgOption;
     setItems(items: any[]): void;
     select(item: NgOption): void;
-    unselect(item: NgOption): void;
     findItem(value: any): NgOption;
+    unselect(item: NgOption): void;
     addItem(item: any): NgOption;
     clearSelected(): void;
     findByLabel(term: string): NgOption;
     filter(term: string): void;
-    resetFilteredItems(): void;
+    resetItems(): void;
     unmarkItem(): void;
     markNextItem(): void;
     markPreviousItem(): void;
@@ -33,11 +33,9 @@ export declare class ItemsList {
     resolveNested(option: any, key: string): any;
     mapItem(item: any, index: number): NgOption;
     mapSelectedItems(): void;
-    private _showSelected(item);
-    private _hideSelected(item);
-    private _defaultSearchFn(search, opt);
-    private _getNextItemIndex(steps);
-    private _stepToItem(steps);
-    private _groupBy(items, prop);
-    private _flatten(groups);
+    private _defaultSearchFn;
+    private _getNextItemIndex;
+    private _stepToItem;
+    private _groupBy;
+    private _flatten;
 }
