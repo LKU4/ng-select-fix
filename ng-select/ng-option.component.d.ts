@@ -11,5 +11,5 @@ export declare class NgOptionComponent implements OnChanges {
     private _disabled;
     constructor(elementRef: ElementRef);
     ngOnChanges(changes: SimpleChanges): void;
-    private _isDisabled;
+    private _isDisabled(value);
 }

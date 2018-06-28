@@ -33,9 +33,9 @@ export declare class ItemsList {
     resolveNested(option: any, key: string): any;
     mapItem(item: any, index: number): NgOption;
     mapSelectedItems(): void;
-    private _defaultSearchFn;
-    private _getNextItemIndex;
-    private _stepToItem;
-    private _groupBy;
-    private _flatten;
+    private _defaultSearchFn(search, opt);
+    private _getNextItemIndex(steps);
+    private _stepToItem(steps);
+    private _groupBy(items, prop);
+    private _flatten(groups);
 }
