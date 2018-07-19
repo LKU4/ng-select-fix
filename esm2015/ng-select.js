@@ -2869,7 +2869,7 @@ NgSelectComponent.decorators = [
         <div class="ng-input">
             <input #filterInput
                    type="text"
-                   autocomplete="{{dropdownId}}"
+                   autocomplete="off"
                    [id]="labelForId"
                    [readOnly]="!searchable"
                    [disabled]="isDisabled"
